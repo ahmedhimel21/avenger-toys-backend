@@ -6,6 +6,9 @@ const port = process.env.PORT || 5000;
 
 // avenger-toys
 // U1QOOTc1Bv5iW9AR
+// middleware
+app.use(cors());
+app.use(express.json());
 
 app.get(
   '/',
@@ -31,12 +34,22 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    const toysCollections = client.db('toysDB').collection('toysCollection');
+
+    // specific data get using subCategory
+    app.get('/toys/:subCategory', async (req,res) =>{
+      const cursor = toysCollections.find({subCategory: req.params.subCategory})
+      const result = await cursor.toArray();
+      res.send(result)
+    })
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
