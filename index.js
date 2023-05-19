@@ -18,7 +18,7 @@ app.get(
 );
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.hltgyxi.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -37,9 +37,24 @@ async function run() {
 
     const toysCollections = client.db('toysDB').collection('toysCollection');
 
-    // specific data get using subCategory
+    // specific data get by subCategory
     app.get('/toys/:subCategory', async (req,res) =>{
       const cursor = toysCollections.find({subCategory: req.params.subCategory})
+      const result = await cursor.toArray();
+      res.send(result)
+    })
+
+    // specific data get by _id
+    app.get('/viewDetails/:id', async(req,res) =>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await toysCollections.findOne(query);
+      res.send(result)
+    })
+
+    // get all data
+    app.get('/allToys', async(req,res) =>{
+      const cursor = toysCollections.find().limit(20);
       const result = await cursor.toArray();
       res.send(result)
     })
