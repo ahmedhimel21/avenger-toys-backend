@@ -69,9 +69,6 @@ async function run() {
 
     // read some data
     app.get('/addAToy', async (req, res) => {
-      // console.log(req.query);
-      // const result = await toysCollections.find().toArray()
-      // res.send(result)
       try {
         if (req.query.sellerEmail) {
           const query = { sellerEmail: req.query.sellerEmail }
@@ -94,6 +91,23 @@ async function run() {
       const query = {_id: new ObjectId(id)}
       const result = await toysCollections.deleteOne(query);
       res.send(result);
+    })
+
+    // update operation
+    app.put('/update/:id',async(req,res) =>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const options = {upsert: true};
+      const toy = req.body;
+      const updatedToy = {
+        $set: {
+          price: toy.price,
+          availableQuantity: toy.availableQuantity,
+          details: toy.details
+        }
+      }
+      const result = await toysCollections.updateOne(filter,updatedToy,options);
+      res.send(result)
     })
 
     // Send a ping to confirm a successful connection
