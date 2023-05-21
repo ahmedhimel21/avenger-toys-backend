@@ -4,8 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 
-// avenger-toys
-// U1QOOTc1Bv5iW9AR
+
 // middleware
 app.use(cors());
 app.use(express.json());
